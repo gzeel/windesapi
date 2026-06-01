@@ -1,0 +1,1 @@
+"""WindesAPI insecure demo API."""
