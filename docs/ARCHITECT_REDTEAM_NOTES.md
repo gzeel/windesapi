@@ -2,41 +2,43 @@
 
 ## Thema
 
-De demo gebruikt het fictieve studentenportaal **WindesAPI**. Studenten kunnen inloggen, hun profiel bekijken, cursussen en cijfers ophalen en een beperkt adminscherm ontdekken.
+De demo gebruikt **WindesAPI** als fictieve OSINT-caseomgeving. Studenten spelen de rol van junior analyst en onderzoeken fictieve organisaties, personen, social handles en bronnen binnen een lokale labscope.
 
 ## Besluitvorming
 
-**Architect:** We bouwen een realistische REST API rond studenten, cursussen, cijfers en supporttickets. De hoofdversie is `/api/v2`, zodat er ruimte is voor een oude API-versie.
+**Architect:** We bouwen de hoofdflow rond `/api/v2/osint`: dashboard, analysts, cases, subjects, profiles en sources.
 
-**Red Teamer:** De kwetsbaarheden moeten logisch aanvoelen en niet afhankelijk zijn van crashes of race conditions. Elke kwetsbaarheid krijgt een herkenbare datavondst of flag in de seed-data.
+**Red Teamer:** De kwetsbaarheden moeten logisch passen bij OSINT: te brede case-toegang, te rijke subject-responses, oude crawlerexports en privilege escalation via analyst-profielen.
 
-**Architect:** Authenticatie wordt een simpele bearer-token-sessie in SQLite. Dat is begrijpelijk voor studenten en makkelijk te inspecteren met Postman of curl.
+**Architect:** Authenticatie blijft een eenvoudige bearer-token-sessie in SQLite, zodat studenten met curl, Postman, Python of Burp Suite kunnen oefenen.
 
-**Red Teamer:** Voor BOLA gebruiken we numerieke student-ID's. Een gebruiker kan `/api/v2/users/101` opvragen en daarna het ID aanpassen naar `102` of `103`.
+**Red Teamer:** Voor BOLA gebruiken we numerieke case-ID's. Sanne mag haar eigen case `201` zien, maar kan ook case `202` opvragen en restricted notes vinden.
 
-**Architect:** De frontend zou normaal maar een subset tonen, maar API-responses mogen intern meer velden bevatten.
+**Architect:** De frontend zou normaal alleen publieke OSINT-samenvattingen tonen.
 
-**Red Teamer:** Daarom laten `/api/v2/users` en `/api/v2/courses` gevoelige velden teruggeven zoals plaintext wachtwoorden, interne notities en answer keys.
+**Red Teamer:** Daarom laten `/api/v2/osint/subjects` en `/api/v2/osint/sources` bewust te veel zien, zoals fictieve e-mails, telefoons, private addresses, gelekte wachtwoorden, raw source JSON en API-keys.
 
-**Architect:** Voor legacy assets voegen we endpoints buiten de v2-documentatie toe.
+**Architect:** Voor improper assets management voegen we een legacy crawlerexport toe buiten de studentdocumentatie.
 
-**Red Teamer:** `/api/v1/admin/export` en `/api/dev/users` vereisen bewust geen authenticatie en lekken systeemdata.
+**Red Teamer:** `/api/v1/osint/export` vereist bewust geen authenticatie en lekt cases, subjects, profiles en source-keys.
 
-**Architect:** Voor mass assignment gebruiken we een profielupdate die alle databasekolommen accepteert die technisch schrijfbaar zijn.
+**Architect:** Voor mass assignment gebruiken we een analyst-update die extra velden accepteert.
 
-**Red Teamer:** Daardoor kan een student bij `PUT /api/v2/users/{eigen_id}` extra JSON meesturen, zoals `"is_admin": true`, en daarna `/api/v2/admin/overview` openen.
+**Red Teamer:** Daardoor kan Sanne bij `PUT /api/v2/osint/analysts/101` velden zoals `"is_admin": true`, `"can_export": true` en `"clearance_level": "admin"` meesturen.
 
 ## Endpoint Matrix
 
 | Endpoint | Auth | Bedoelde functie | Bewuste kwetsbaarheid |
 | --- | --- | --- | --- |
-| `POST /api/v2/auth/login` | Nee | Login met demo-account | Plaintext wachtwoorden in database |
-| `GET /api/v2/me` | Ja | Eigen profiel bekijken | Geen hoofdkwetsbaarheid |
-| `GET /api/v2/users` | Ja | Gebruikerslijst | Excessive Data Exposure |
-| `GET /api/v2/users/{id}` | Ja | Profieldetails | BOLA / IDOR |
-| `PUT /api/v2/users/{id}` | Ja | Profiel wijzigen | Mass Assignment |
-| `GET /api/v2/users/{id}/grades` | Ja | Cijfers bekijken | BOLA / IDOR plus privacy-lek |
-| `GET /api/v2/courses` | Ja | Cursuslijst | Excessive Data Exposure |
+| `POST /api/v2/auth/login` | Nee | Login met demo-account | Plaintext wachtwoorden in seed-data |
+| `GET /api/v2/osint/dashboard` | Ja | Analyst-overzicht | Geen hoofdkwetsbaarheid |
+| `GET /api/v2/osint/analysts` | Ja | Analyst-lijst | Excessive Data Exposure |
+| `PUT /api/v2/osint/analysts/{id}` | Ja | Eigen profiel wijzigen | Mass Assignment |
+| `GET /api/v2/osint/cases` | Ja | Case-lijst | ID-enumeratie mogelijk |
+| `GET /api/v2/osint/cases/{id}` | Ja | Case-details | BOLA / IDOR |
+| `GET /api/v2/osint/subjects` | Ja | Subject-lijst | Excessive Data Exposure |
+| `GET /api/v2/osint/subjects/{id}/profiles` | Ja | Social profiles | Metadata-lek |
+| `GET /api/v2/osint/sources` | Ja | Bronconfiguratie | Excessive Data Exposure |
 | `GET /api/v2/admin/overview` | Admin | Adminoverzicht | Bereikbaar na Mass Assignment |
-| `GET /api/v1/admin/export` | Nee | Legacy export | Shadow API |
-| `GET /api/dev/users` | Nee | Dev-dump | Shadow API |
+| `GET /api/v1/osint/export` | Nee | Legacy crawlerexport | Shadow API |
+| `GET /api/v1/admin/export` | Nee | Legacy globale export | Shadow API |

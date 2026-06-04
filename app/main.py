@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 
 from app.database import initialize_database
-from app.routers import admin, auth, courses, legacy, users
+from app.routers import admin, auth, courses, legacy, osint, users
 
 
 LOGO_URL = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSv4OLoVaIPJc2VWDiI2yNOVp21OKciAgEfTw&s"
@@ -18,7 +18,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="WindesAPI",
-    description="Lokaal draaiende demo-API met bewust ingebouwde kwetsbaarheden voor onderwijs.",
+    description="Lokaal draaiende OSINT-demo-API met bewust ingebouwde kwetsbaarheden voor onderwijs.",
     version="2.0.0-demo",
     lifespan=lifespan,
 )
@@ -62,7 +62,7 @@ def landing_page() -> str:
         <main>
           <img src="{LOGO_URL}" alt="WindesAPI logo">
           <h1>WindesAPI</h1>
-          <p>Lokaal draaiende insecure-by-design demo-API voor cybersecurityonderwijs.</p>
+          <p>Lokaal draaiende insecure-by-design OSINT-demo-API voor cybersecurityonderwijs.</p>
           <p><a href="/docs">Open API documentatie</a> of test <a href="/health">/health</a>.</p>
         </main>
       </body>
@@ -76,6 +76,7 @@ def health() -> dict:
 
 
 app.include_router(auth.router)
+app.include_router(osint.router)
 app.include_router(users.router)
 app.include_router(courses.router)
 app.include_router(admin.router)

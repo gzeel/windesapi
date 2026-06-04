@@ -5,7 +5,7 @@ LABEL org.opencontainers.image.title="WindesAPI" \
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    CAMPUS_DB_PATH=/app/data/campus.db
+    WINDES_DB_PATH=/app/data/windesapi.db
 
 WORKDIR /app
 

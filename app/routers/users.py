@@ -13,6 +13,7 @@ def expose_user(row) -> dict:
     data = row_to_dict(row)
     data["is_admin"] = bool(data["is_admin"])
     data["beta_features"] = bool(data["beta_features"])
+    data["can_export"] = bool(data["can_export"])
     return data
 
 
@@ -24,7 +25,10 @@ def me(current_user: CurrentUser) -> dict:
         "full_name": current_user["full_name"],
         "email": current_user["email"],
         "role": current_user["role"],
+        "team": current_user["team"],
+        "clearance_level": current_user["clearance_level"],
         "is_admin": bool(current_user["is_admin"]),
+        "can_export": bool(current_user["can_export"]),
     }
 
 
@@ -60,6 +64,9 @@ def update_user(
         "role",
         "is_admin",
         "student_number",
+        "team",
+        "clearance_level",
+        "can_export",
         "api_quota",
         "recovery_code",
         "internal_notes",

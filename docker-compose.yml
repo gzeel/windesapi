@@ -6,5 +6,5 @@ services:
     ports:
       - "8000:8000"
     environment:
-      CAMPUS_DB_PATH: /app/data/campus.db
+      WINDES_DB_PATH: /app/data/windesapi.db
       RESET_DB_ON_START: "true"

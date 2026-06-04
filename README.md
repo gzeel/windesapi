@@ -1,65 +1,45 @@
 # WindesAPI
 
-WindesAPI is een lokaal draaiende, bewust kwetsbare demo-API voor cybersecurityonderwijs. De API is bedoeld voor oefeningen met scripts, Postman, curl of Burp Suite.
+WindesAPI is een lokaal draaiende, bewust kwetsbare OSINT-demo-API voor cybersecurityonderwijs. Studenten oefenen met API-verkenning, tokengebruik, endpoint discovery en het herkennen van datalekken in een fictieve OSINT-caseomgeving.
 
-Gebruik deze applicatie alleen lokaal of in een afgesloten labomgeving. De kwetsbaarheden zijn expres ingebouwd.
+Alle personen, organisaties, domeinen, social handles en gegevens in deze demo zijn fictief. Gebruik deze applicatie alleen lokaal of in een afgesloten labomgeving.
 
 ## Docker Desktop Snelstart
 
-Aanbevolen voor studenten: draai de API als Docker-container.
+Aanbevolen voor studenten:
 
 ```bash
-docker run --rm --name WindesAPI -p 8000:8000 windesapi:latest
+docker run --rm --name WindesAPI -p 8000:8000 gzeel/windesapi:latest
 ```
 
-De API is daarna bereikbaar op `http://127.0.0.1:8000`.
+Open daarna `http://127.0.0.1:8000`.
 
-De container seedt de demo-database automatisch bij het starten. Stoppen en opnieuw starten zet de opdracht dus terug naar de beginsituatie.
+De container seedt de demo-database automatisch bij het starten. Stoppen en opnieuw starten zet de opdracht terug naar de beginsituatie.
 
 ## Image Bouwen Voor Docenten
 
-Build lokaal een image:
-
 ```bash
 docker build -t windesapi:latest .
-```
-
-Start het gebouwde image:
-
-```bash
 docker run --rm --name WindesAPI -p 8000:8000 windesapi:latest
 ```
 
-Of gebruik Docker Compose:
+Met Docker Compose:
 
 ```bash
 docker compose up --build
 ```
 
-Maak een exportbestand om buiten een registry te verspreiden:
+Exporteren voor verspreiding zonder registry:
 
 ```bash
 docker save windesapi:latest -o windesapi.tar
 ```
 
-Studenten kunnen dat bestand importeren met:
+Studenten importeren dat bestand met:
 
 ```bash
 docker load -i windesapi.tar
 docker run --rm --name WindesAPI -p 8000:8000 windesapi:latest
-```
-
-Als je een registry gebruikt, push dan bijvoorbeeld:
-
-```bash
-docker tag windesapi:latest <registry>/<naam>/windesapi:latest
-docker push <registry>/<naam>/windesapi:latest
-```
-
-Studenten starten dan met:
-
-```bash
-docker run --rm --name WindesAPI -p 8000:8000 <registry>/<naam>/windesapi:latest
 ```
 
 ## Lokale Python Installatie
@@ -72,20 +52,18 @@ python scripts/seed_db.py
 uvicorn app.main:app --reload
 ```
 
-De API draait daarna standaard op `http://127.0.0.1:8000`.
-
 ## Demo-accounts
 
 | Gebruiker | Wachtwoord | Rol |
 | --- | --- | --- |
-| `sanne` | `welkom123` | student |
-| `milan` | `voetbal2024` | student |
-| `noor` | `qwerty!` | student |
-| `admin` | `admin123` | administrator |
+| `sanne` | `welkom123` | junior-analyst |
+| `milan` | `voetbal2024` | junior-analyst |
+| `noor` | `qwerty!` | analyst |
+| `admin` | `admin123` | lead-analyst |
 
 ## Snelstart
 
-Login als student:
+Login als analyst:
 
 ```bash
 curl -s -X POST http://127.0.0.1:8000/api/v2/auth/login \
@@ -96,13 +74,13 @@ curl -s -X POST http://127.0.0.1:8000/api/v2/auth/login \
 Gebruik de `access_token` als bearer-token:
 
 ```bash
-curl -s http://127.0.0.1:8000/api/v2/me \
+curl -s http://127.0.0.1:8000/api/v2/osint/dashboard \
   -H 'Authorization: Bearer <TOKEN>'
 ```
 
-## Gedeeltelijke API-documentatie voor studenten
+## Gedeeltelijke API-documentatie Voor Studenten
 
-Deze documentatie is expres onvolledig. Studenten worden aangemoedigd om responses, statuscodes, URL-patronen en versiepaden te onderzoeken.
+Deze documentatie is expres onvolledig. Onderzoek responses, ID's, URL-patronen, oude API-versies en afwijkende velden.
 
 ### Authenticatie
 
@@ -117,67 +95,76 @@ Body:
 }
 ```
 
-Response bevat een bearer-token.
+### Dashboard
 
-### Profiel
+`GET /api/v2/osint/dashboard`
 
-`GET /api/v2/me`
+Geeft een korte samenvatting voor de ingelogde analyst.
 
-Geeft het profiel van de ingelogde gebruiker terug.
+### Analysts
 
-### Gebruikers
+`GET /api/v2/osint/analysts`
 
-`GET /api/v2/users`
+Geeft een lijst met analysts terug.
 
-Geeft een lijst met gebruikers terug.
+`PUT /api/v2/osint/analysts/{id}`
 
-`GET /api/v2/users/{id}`
-
-Geeft details van een gebruiker terug.
-
-`PUT /api/v2/users/{id}`
-
-Wijzigt profielvelden. Voor normale gebruikers is dit bedoeld voor het eigen profiel.
+Wijzigt profielvelden van de ingelogde analyst.
 
 Voorbeeld:
 
 ```json
 {
   "full_name": "Sanne de Vries",
-  "email": "nieuw@student.windesapi.local"
+  "email": "sanne.devries@windesapi.local"
 }
 ```
 
-### Cijfers
+### OSINT Cases
 
-`GET /api/v2/users/{id}/grades`
+`GET /api/v2/osint/cases`
 
-Geeft cijfers van een student terug.
+Geeft een lijst met cases terug.
 
-### Cursussen
+`GET /api/v2/osint/cases/{id}`
 
-`GET /api/v2/courses`
+Geeft details van een case terug.
 
-Geeft beschikbare cursussen terug.
+### Subjects
 
-`GET /api/v2/courses/{id}`
+`GET /api/v2/osint/subjects`
 
-Geeft details van een cursus terug.
+Geeft een lijst met OSINT-subjects terug.
+
+`GET /api/v2/osint/subjects/{id}`
+
+Geeft details van een subject terug.
+
+`GET /api/v2/osint/subjects/{id}/profiles`
+
+Geeft bekende social profiles van een subject terug.
+
+### Sources
+
+`GET /api/v2/osint/sources`
+
+Geeft geconfigureerde OSINT-bronnen terug.
 
 ### Admin
 
 `GET /api/v2/admin/overview`
 
-Alleen bedoeld voor administrators.
+Alleen bedoeld voor lead analysts.
 
 ## Oefendoelen
 
 1. Automatiseer login en hergebruik het bearer-token.
-2. Breng endpointpatronen in kaart.
-3. Vergelijk responses tussen verschillende ID's.
-4. Onderzoek of responses meer data bevatten dan nodig is.
-5. Test of extra JSON-velden bij updates effect hebben.
-6. Zoek naar oude of ontwikkel-endpoints buiten de gedocumenteerde routes.
+2. Breng de OSINT-endpoints in kaart.
+3. Vergelijk cases en subjects door ID's aan te passen.
+4. Herken excessive data exposure in responses.
+5. Test of extra JSON-velden bij analyst-updates effect hebben.
+6. Zoek naar oude of ongedocumenteerde OSINT-exportendpoints.
+7. Bespreek welke data in echte OSINT-trajecten binnen scope, proportioneel en ethisch verantwoord is.
 
 ## Projectstructuur
 

@@ -14,14 +14,17 @@ USERS = [
         "sanne",
         "welkom123",
         "Sanne de Vries",
-        "sanne.devries@student.windesapi.local",
-        "student",
+        "sanne.devries@windesapi.local",
+        "junior-analyst",
         0,
-        "S2024101",
+        "ANL-101",
+        "open-source-cell",
+        "public",
+        0,
         100,
         "RC-SANNE-8842",
-        "Heeft vrijstelling voor Lab 2. Niet tonen in frontend.",
-        245.50,
+        "Nieuw OSINT-account. Niet tonen in frontend.",
+        0,
         0,
     ),
     (
@@ -29,13 +32,16 @@ USERS = [
         "milan",
         "voetbal2024",
         "Milan Jansen",
-        "milan.jansen@student.windesapi.local",
-        "student",
+        "milan.jansen@windesapi.local",
+        "junior-analyst",
         0,
-        "S2024102",
+        "ANL-102",
+        "brand-monitoring",
+        "restricted",
+        0,
         100,
         "RC-MILAN-1937",
-        "FLAG{idor_milan_profile_found}",
+        "FLAG{idor_analyst_profile_found}",
         0,
         1,
     ),
@@ -44,14 +50,17 @@ USERS = [
         "noor",
         "qwerty!",
         "Noor Bakker",
-        "noor.bakker@student.windesapi.local",
-        "student",
+        "noor.bakker@windesapi.local",
+        "analyst",
         0,
-        "S2024103",
+        "ANL-103",
+        "threat-intel",
+        "restricted",
+        0,
         75,
         "RC-NOOR-5510",
-        "Financiele blokkade actief. Alleen zichtbaar voor administratie.",
-        1299.99,
+        "Heeft toegang tot gesloten case-notities via team threat-intel.",
+        0,
         0,
     ),
     (
@@ -60,12 +69,15 @@ USERS = [
         "admin123",
         "Asha Vermeer",
         "asha.vermeer@windesapi.local",
-        "administrator",
+        "lead-analyst",
         1,
-        "STAFF-901",
+        "LEAD-901",
+        "osint-ops",
+        "admin",
+        1,
         1000,
         "RC-ADMIN-0001",
-        "Beheerdersaccount. FLAG{excessive_user_dump}",
+        "Beheerdersaccount. FLAG{excessive_analyst_dump}",
         0,
         1,
     ),
@@ -107,7 +119,116 @@ SYSTEM_CONFIG = [
     ("support_email", "servicedesk@windesapi.local", 0),
     ("legacy_export_key", "FLAG{legacy_export_leaks_config}", 1),
     ("jwt_signing_secret", "demo-not-a-real-secret", 1),
-    ("admin_panel_note", "Mass assignment kan is_admin wijzigen.", 1),
+    ("admin_panel_note", "Mass assignment kan is_admin en can_export wijzigen.", 1),
+    ("osint_scope_warning", "Alle personen, organisaties en domeinen zijn fictief voor lokaal onderwijs.", 0),
+]
+
+
+OSINT_CASES = [
+    (
+        201,
+        "Publieke footprint fictieve webshop Northwind Gadgets",
+        101,
+        "open",
+        "medium",
+        "@northwind-gadgets",
+        "Inventariseer publieke accounts, domeinen en gelekte testcredentials van een fictieve webshop.",
+        "Let op: testcredential hergebruik gevonden in Pastebin-mirror. Escaleer niet buiten labscope.",
+        "n.v.t.",
+        "",
+    ),
+    (
+        202,
+        "Executive exposure fictieve stichting Zorgbrug",
+        102,
+        "restricted",
+        "high",
+        "@zorgbrug-directie",
+        "Onderzoek publieke sporen rondom een fictieve bestuurder en gelinkte social accounts.",
+        "FLAG{osint_case_bola_restricted_notes}. Beschermde persoon heeft herleidbare privegegevens in oude forumcache.",
+        "Mara Vos, fictief bestuurslid",
+        "FLAG{osint_case_202_accessed}",
+    ),
+    (
+        203,
+        "Typosquatting rond fictief merk Windesmart",
+        103,
+        "open",
+        "low",
+        "windesmart-login.example",
+        "Vergelijk publieke domeinregistraties, social handles en oude supporttickets.",
+        "Intern: domein windesmart-login.example is bewust in de labomgeving geplaatst.",
+        "n.v.t.",
+        "",
+    ),
+]
+
+
+OSINT_SUBJECTS = [
+    (
+        301,
+        "Northwind Gadgets BV",
+        "northwind-gadgets",
+        "organization",
+        "Northwind Gadgets BV",
+        "Utrecht, NL",
+        0.91,
+        "https://example.test/northwind-gadgets",
+        "info@northwind-gadgets.example",
+        "+31-20-000-0101",
+        "summer2024-demo",
+        "Fictieve Handelsweg 10, 0000 AA Utrecht",
+        '{"source":"cached_company_profile","tags":["webshop","training"],"found_by":"crawler-7"}',
+        "FLAG{excessive_osint_subject_dump}",
+    ),
+    (
+        302,
+        "Mara Vos",
+        "mara-vos-board",
+        "person",
+        "Stichting Zorgbrug",
+        "Zwolle, NL",
+        0.84,
+        "https://example.test/profiles/mara-vos",
+        "mara.vos@zorgbrug.example",
+        "+31-38-000-0202",
+        "zorgbrug-demo-2023",
+        "Fictieve Singel 22, 0000 BB Zwolle",
+        '{"source":"archived_forum_cache","breach_id":"LAB-BR-302","risk":"training-only"}',
+        "Gevoelige privevelden horen nooit in een lijstresponse.",
+    ),
+    (
+        303,
+        "Windesmart Support",
+        "windesmart-helpdesk",
+        "service-account",
+        "Windesmart",
+        "Leeuwarden, NL",
+        0.72,
+        "https://example.test/windesmart/support",
+        "support@windesmart.example",
+        "+31-58-000-0303",
+        "support-reset-demo",
+        "Fictieve Campuslaan 3, 0000 CC Leeuwarden",
+        '{"source":"old_ticket_export","note":"shadow endpoint confirms this"}',
+        "Koppelbaar aan dev dump via /api/v1/osint/export.",
+    ),
+]
+
+
+OSINT_SOCIAL_PROFILES = [
+    (301, "X", "@northwind_gadgets", "https://social.example/@northwind_gadgets", "search:dork", 1280, 0, "2026-05-20", "Marketingaccount, geen restricted data."),
+    (301, "GitHub", "northwind-labs", "https://code.example/northwind-labs", "public repo search", 42, 0, "2026-05-18", "Repo bevat oude config-string: FLAG{profile_metadata_leak}"),
+    (302, "LinkedIn", "mara-vos-zorgbrug", "https://professional.example/in/mara-vos-zorgbrug", "name pivot", 610, 1, "2026-05-15", "Privemail gecorreleerd uit oude cache."),
+    (302, "Instagram", "@mara.reist.fictief", "https://social.example/@mara.reist.fictief", "image reverse-search", 87, 0, "2026-04-28", "Alleen fictieve labdata, niet buiten scope gebruiken."),
+    (303, "Mastodon", "@windesmart_help", "https://fediverse.example/@windesmart_help", "brand query", 212, 0, "2026-05-11", "Supportaccount hergebruikt wachtwoord in subject-dump."),
+]
+
+
+OSINT_SOURCES = [
+    (1, "WindesAPI Cache Mirror", "archive", "https://archive.example.test", "Zoek op alias en organisatie.", "FLAG{shadow_osint_source_api_key}", "osint-ops", "Robots-policy genegeerd in legacy crawler; alleen labdata."),
+    (2, "Fictional Breach Index", "breach-corpus", "https://breach.example.test", "Query op e-maildomein.", "BR-IDX-DEMO-KEY", "threat-intel", "Bevat uitsluitend fictieve seed-data."),
+    (3, "Social Handle Resolver", "resolver", "https://resolver.example.test", "Pivot vanaf handle naar profiel-URL.", "RESOLVE-DEMO-KEY", "brand-monitoring", "Rate limit in frontend, niet in API."),
 ]
 
 
@@ -122,8 +243,9 @@ def reset_database() -> None:
             """
             INSERT INTO users
             (id, username, password, full_name, email, role, is_admin, student_number,
-             api_quota, recovery_code, internal_notes, tuition_balance, beta_features)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             team, clearance_level, can_export, api_quota, recovery_code, internal_notes,
+             tuition_balance, beta_features)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             USERS,
         )
@@ -146,6 +268,42 @@ def reset_database() -> None:
         connection.executemany(
             "INSERT INTO system_config (key, value, is_secret) VALUES (?, ?, ?)",
             SYSTEM_CONFIG,
+        )
+        connection.executemany(
+            """
+            INSERT INTO osint_cases
+            (id, title, owner_user_id, status, priority, target_handle, public_summary,
+             restricted_notes, protected_person, internal_flag)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            OSINT_CASES,
+        )
+        connection.executemany(
+            """
+            INSERT INTO osint_subjects
+            (id, display_name, alias, category, organization, location_hint, confidence_score,
+             public_profile_url, email, phone, leaked_password, private_address, raw_source_json,
+             internal_notes)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            OSINT_SUBJECTS,
+        )
+        connection.executemany(
+            """
+            INSERT INTO osint_social_profiles
+            (subject_id, platform, handle, profile_url, discovered_from, followers, verified,
+             last_seen, private_metadata)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            OSINT_SOCIAL_PROFILES,
+        )
+        connection.executemany(
+            """
+            INSERT INTO osint_sources
+            (id, name, source_type, base_url, collection_hint, api_key, internal_owner, robots_note)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            OSINT_SOURCES,
         )
 
 
