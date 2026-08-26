@@ -1,0 +1,8 @@
+{
+  "require_api_key": true,
+  "enforce_project_ownership": true,
+  "minimal_responses": true,
+  "validate_queries": true,
+  "safe_errors_headers_cors": true,
+  "rate_limit_and_log": true
+}

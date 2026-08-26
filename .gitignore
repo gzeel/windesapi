@@ -3,3 +3,16 @@ __pycache__/
 .venv/
 data/*.db
 data/*.db-journal
+.env
+.env.*
+!.env.example
+.pytest_cache/
+.coverage
+htmlcov/
+workspace/
+student-work/
+*.db
+*.db-journal
+*.log
+.api-key
+.DS_Store

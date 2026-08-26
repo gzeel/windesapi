@@ -1,0 +1,13 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    image: windesapi-api-lab:dev
+
+  client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    image: windesapi-api-client:dev

@@ -6,3 +6,9 @@ data/
 *.db
 *.db-journal
 .DS_Store
+workspace/
+student-work/
+.pytest_cache/
+.coverage
+*.log
+.api-key

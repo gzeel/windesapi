@@ -1,0 +1,12 @@
+services:
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: test
+    image: windesapi-tests:dev
+    environment:
+      LAB_SETTINGS_PATH: /opt/lab/lab-settings.json
+      LAB_DB_PATH: /tmp/lab-test.db
+      LAB_API_KEY_FILE: /tmp/lab-test.key
+      LAB_AUDIT_LOG_PATH: /tmp/lab-audit.log
